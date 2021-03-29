@@ -1,5 +1,6 @@
 from easydict import EasyDict as edict
 import json
+import os
 
 config = edict()
 config.TRAIN = edict()
@@ -31,22 +32,30 @@ config.TRAIN.lambda_binary = 2e-2
 config.TRAIN.lambda_perceptual = 1e-4
 
 ### TRAIN DATSET PATH
-# offset = './datasets/DMENet/train/'
-offset = '/data1/juntonglee/defocus_map_estimation/DMENet/train/'
-config.TRAIN.synthetic_img_path = offset + 'SYNDOF/image/'
-config.TRAIN.defocus_map_path = offset + 'SYNDOF/blur_map/'
-config.TRAIN.defocus_map_norm_path = offset + 'SYNDOF/blur_map_norm/'
-config.TRAIN.synthetic_binary_map_path = offset + 'SYNDOF/blur_map_binary/'
+data_offset = './datasets/'
+# data_offset = '/data1/junyonglee/defocus_map_estimation/DMENet/'
+config.TRAIN.synthetic_img_path = os.path.join(data_offset, 'train/SYNDOF/image/')
+config.TRAIN.defocus_map_path = os.path.join(data_offset, 'train/SYNDOF/blur_map/')
+config.TRAIN.defocus_map_norm_path = os.path.join(data_offset, 'train/SYNDOF/blur_map_norm/')
+config.TRAIN.synthetic_binary_map_path = os.path.join(data_offset, 'train/SYNDOF/blur_map_binary/')
 # Real
-config.TRAIN.real_img_path = offset + 'CUHK/image/'
-config.TRAIN.real_binary_map_path = offset + 'CUHK/gt/'
-config.TRAIN.real_img_no_label_path = offset + 'Flickr/'
+config.TRAIN.real_img_path = os.path.join(data_offset, 'train/CUHK/image/')
+config.TRAIN.real_binary_map_path = os.path.join(data_offset, 'train/CUHK/gt/')
+config.TRAIN.real_img_no_label_path = os.path.join(data_offset, 'train/Flickr/')
 
 ### TEST DATSET PATH
-# offset = './datasets/DMENet/test/CUHK/'
-offset = '/data1/junyonglee/defocus_map_estimation/DMENet/test/CUHK/'
-config.TEST.cuhk_img_path = offset + 'image/'
-config.TEST.cuhk_binary_map_path = offset + 'gt/'
+config.TEST.cuhk_img_path = os.path.join(data_offset, 'test/CUHK/image/')
+config.TEST.cuhk_binary_map_path = os.path.join(data_offset, 'test/CUHK/gt/')
+config.TEST.SYNDOF_img_path = os.path.join(data_offset, 'test/SYNDOF/image/')
+config.TEST.SYNDOF_gt_map_path = os.path.join(data_offset, 'test/SYNDOF/gt/')
+config.TEST.RTF0_img_path = os.path.join(data_offset, 'test/RTF/image/0/')
+config.TEST.RTF0_gt_map_path = os.path.join(data_offset, 'test/RTF/gt/0/')
+config.TEST.RTF1_img_path = os.path.join(data_offset, 'test/RTF/image/1/')
+config.TEST.RTF1_gt_map_path = os.path.join(data_offset, 'test/RTF/gt/1/')
+config.TEST.RTF1_6_img_path = os.path.join(data_offset, 'test/RTF/image/1.6/')
+config.TEST.RTF1_6_gt_map_path = os.path.join(data_offset, 'test/RTF/gt/1.6/')
+config.TEST.random_img_path = os.path.join(data_offset, 'test/random/')
+
 
 ## train image size
 config.TRAIN.height = 240
@@ -61,7 +70,9 @@ config.TRAIN.write_sample_every = 1000
 config.TRAIN.refresh_image_log_every = 20
 
 # save dir
-config.TRAIN.root_dir = './logs/'
+config.root_offset = './logs/'
+# config.root_offset = '/Jarvis/logs/junyonglee'
+config.TRAIN.root_dir = os.path.join(config.root_offset, 'DMENet_CVPR2019/')
 
 config.TRAIN.max_coc = 15.;
 
@@ -70,3 +81,18 @@ def log_config(path, cfg):
         f.write('================================================\n')
         f.write(json.dumps(cfg, indent=4))
         f.write('\n================================================\n')
+
+def get_eval_path(test_set, cfg):
+    if test_set == 'CUHK':
+        # return cfg.TEST.cuhk_img_path, cfg.TEST.cuhk_binary_map_path
+        return cfg.TEST.cuhk_img_path, None
+    elif test_set == 'SYNDOF':
+        return cfg.TEST.SYNDOF_img_path, cfg.TEST.SYNDOF_gt_map_path
+    elif test_set == 'RTF0':
+        return cfg.TEST.RTF0_img_path, cfg.TEST.RTF0_gt_map_path
+    elif test_set == 'RTF1':
+        return cfg.TEST.RTF1_img_path, cfg.TEST.RTF1_gt_map_path
+    elif test_set == 'RTF1_6':
+        return cfg.TEST.RTF1_6_img_path, cfg.TEST.RTF1_6_gt_map_path
+    elif test_set == 'random':
+        return cfg.TEST.random_img_path, None

@@ -2,6 +2,20 @@
 *.sublime*
 pretrained/*
 utils/*
+setup.sh
+update.sh
+update_amend.sh
+jupyter/*
+.ipynb*
+sample/*
+*.zip
+ckpt/
+eval_self.py
+.nfs*
+datasets/*
+logs/*
+backup/*
+deconvolution/output/*
 
 # trash
 .dropbox
